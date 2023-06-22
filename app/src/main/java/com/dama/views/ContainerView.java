@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
@@ -123,11 +124,12 @@ public class ContainerView extends FrameLayout {
             TranslateAnimation animation = new TranslateAnimation(currX,newX,currY,newY);
             animation.setFillAfter(true);
             animation.setFillBefore(true);
-            animation.setDuration(150);
+            animation.setDuration(100);
+            //animation.setInterpolator(new AccelerateInterpolator());
 
             //start animation on view
-            cursor.changeDimension(keyView.getKeyHeight(), keyView.getKeyWidth(), 0);
             cursor.startAnimation(animation);
+            cursor.changeDimension(keyView.getKeyHeight(), keyView.getKeyWidth(), 0);
 
             //update
             this.currX = newX;
@@ -136,36 +138,6 @@ public class ContainerView extends FrameLayout {
     }
 
     public synchronized void prova(KeyView keyView){
-        /*keyView.post(() -> {
-            //coordinate keyView
-            Rect keyViewCoordinates = rectCoordinate(keyView);
-            int x = keyViewCoordinates.left;
-            int y = keyViewCoordinates.top;
-
-            //remove cursor
-            removeView(cursor);
-
-            //add cursor
-            LayoutParams layoutParams = new LayoutParams(
-                    LayoutParams.WRAP_CONTENT,
-                    LayoutParams.WRAP_CONTENT
-            );
-            layoutParams.leftMargin = x; //set x
-            layoutParams.topMargin = y; //set y
-            cursor.setLayoutParams(layoutParams);
-            cursor.changeDimension(keyView.getKeyHeight(), keyView.getKeyWidth(), 0);
-            currX = x;
-            currY = y;
-            addView(cursor);
-            */
-
-            //distances
-            /*float newX = x - cursor.getX();
-            float newY = y - cursor.getY();
-            currY = newY;
-            currX = newX;*/
-
-        //});
         keyView.post(() -> {
             //keyView coordinate
             Rect keyViewCoordinates = rectCoordinate(keyView);
@@ -181,25 +153,15 @@ public class ContainerView extends FrameLayout {
             TranslateAnimation animation = new TranslateAnimation(newX,newX,newY,newY);
             animation.setFillAfter(true);
             animation.setFillBefore(true);
-            animation.setDuration(150);
+            animation.setDuration(100);
 
             //start animation on view
-            cursor.changeDimension(keyView.getKeyHeight(), keyView.getKeyWidth(), 0);
             cursor.startAnimation(animation);
+            cursor.changeDimension(keyView.getKeyHeight(), keyView.getKeyWidth(), 0);
 
             //update
             this.currX = newX;
             this.currY = newY;
         });
     }
-
-    public void removeCursor(){
-        removeView(cursor);
-    }
-
-    public void addCursor(KeyView focusedView){
-        initCursorPosition(focusedView);
-        addView(cursor);
-    }
-
 }

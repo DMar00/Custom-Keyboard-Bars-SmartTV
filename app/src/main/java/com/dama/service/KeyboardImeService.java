@@ -66,6 +66,7 @@ public class KeyboardImeService extends InputMethodService {
                     }
                     break;
                 case KeyEvent.KEYCODE_DPAD_CENTER:
+                case KeyEvent.KEYCODE_0:    //todo remove - just for emulator test OK
                     Cell focus = controller.getFocusController_().getCurrentFocus();
                     Key key = controller.getKeysController().getKeyAtPosition(focus);
                     int code = key.getCode();

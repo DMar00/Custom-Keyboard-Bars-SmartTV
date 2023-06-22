@@ -34,10 +34,13 @@ public class ViewsController {
     public void setHighLightPosition(Cell focus){
         KeyView keyView = keyboardView.getKeyViewAtCell(focus);
         containerView.setHighLightPosition(keyView);
+
+        //todo add other highlighter ?
     }
 
     public void removeHighLight(){
         containerView.removeHighlight();
+        //todo remove other highlighter ?
     }
 
     public void clearBarViews(){

@@ -2,6 +2,8 @@ package com.dama.controllers;
 
 import android.graphics.drawable.Drawable;
 import android.inputmethodservice.Keyboard;
+import android.util.Log;
+
 import com.dama.utils.Cell;
 import com.dama.utils.Key;
 import com.dama.utils.Utils;
@@ -27,13 +29,14 @@ public class KeysController {
             for(int i=0, w=0; i<Controller.ROWS; i++) {
                 ArrayList<Key> rowKeys = new ArrayList<>();
                 if (!Utils.isIntPresent(Controller.barsIndexes, i)) {//ArrayList at index 1-3-5-7 must be empty for suggestions
-                    if (i == (Controller.ROWS - 1)) cols = 7;
+                    if (i == (Controller.ROWS - 1)) cols = Controller.COLS - 3; //todo mod was 7
                     for (int j = 0; j < cols; j++) {
-                        Keyboard.Key k = keyboard.getKeys().get(getKeyIndex(new Cell(w, j)));
-                        Key key = new Key(k.codes[0], k.label.toString(), k.icon);
-                        if(key.getLabel().length()>0)
-                            keysPosition.put(key.getLabel().charAt(0), new Cell(i, j));
-                        rowKeys.add(key);
+                            Keyboard.Key k = keyboard.getKeys().get(getKeyIndex(new Cell(w, j)));
+                            Key key = new Key(k.codes[0], k.label.toString(), k.icon);
+                            //Log.d("mmmm","k: "+key+" - size cell: "+new Cell(w, m));
+                            if(key.getLabel().length()>0)
+                                keysPosition.put(key.getLabel().charAt(0), new Cell(i, j));
+                            rowKeys.add(key);
                     }
                     w++;
                 }
@@ -107,4 +110,31 @@ public class KeysController {
         return keys;
     }
 
+    /*******************CLICKS********************/
+
+    public int getClicksNumber(Cell selected, Cell other){
+        //int clicks = 0;
+        Cell selectedCell = new Cell(getNewRow(selected.getRow()), selected.getCol());
+        Cell otherCell = new Cell(getNewRow(other.getRow()), other.getCol());
+        Log.d("newCells", "sel: "+selectedCell+" - oth: "+otherCell);
+
+        int difRow = Math.abs(selectedCell.getRow()-otherCell.getRow());
+        int difCol = Math.abs(selectedCell.getCol()-otherCell.getCol());
+        int difCol2 = (Controller.COLS) - difCol;
+        int clicks =  difRow + Math.min(difCol, difCol2);
+        return clicks;
+    }
+
+    private int getNewRow(int oldRow){
+        switch (oldRow){
+            case 2:
+                return 0;
+            case 4:
+                return 1;
+            case 6:
+                return 2;
+            default:
+                return -1;
+        }
+    }
 }

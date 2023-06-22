@@ -29,6 +29,8 @@ public class KeyboardView  extends TableLayout {
     public void initKeyboardView(HashMap<Integer, ArrayList<Key>> allKeys){
         rows = new HashMap<>();
         String colorLabel = Utils.colorToString(ContextCompat.getColor(getContext(), R.color.label));
+        Drawable keyDrawable = ContextCompat.getDrawable(getContext(), R.drawable.key_background);
+        Drawable hiddenKeyDrawable = ContextCompat.getDrawable(getContext(), R.drawable.key_hidden_background);
 
         //create rows and bars
         for(int i = 0; i< Controller.ROWS; i++){
@@ -40,10 +42,14 @@ public class KeyboardView  extends TableLayout {
             }else{
                 KeyboardRowView row = new KeyboardRowView(getContext());
                 ArrayList<Key> keys = allKeys.get(i);
-                Drawable keyDrawable = ContextCompat.getDrawable(getContext(), R.drawable.key_background);
                 for(int j=0; j<keys.size(); j++){
-                    //KeyView kv = new KeyView(getContext(),keyDrawable, keys.get(j).getLabel());
-                    KeyView kv = new KeyView(getContext(), keyDrawable, keys.get(j).getLabel(), colorLabel);
+                    Drawable background;
+                    if(keys.get(j).getCode()==Controller.HIDDEN_KEY){
+                        background = hiddenKeyDrawable;
+                    }else {
+                        background = keyDrawable;
+                    }
+                    KeyView kv = new KeyView(getContext(), background, keys.get(j).getLabel(), colorLabel);
                     if(keys.get(j).getIcon()!=null)
                         kv.setIcon(keys.get(j).getIcon());
                     kv.addKeyParams(keys.get(j).getCode(), false);

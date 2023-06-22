@@ -36,21 +36,10 @@ public abstract class SuggestionsController {
 
     private int[] generateSuggestionsColPositions(Cell cell){
         int position = cell.getCol();
-
         int[] indexes = new int[N_SUG_FOR_BAR];
-        if(position == 0){
-            indexes[0] = position;
-            indexes[1] = position+1;
-            indexes[2] = position+2;
-        }else if(position == Controller.COLS-1){
-            indexes[0] = position-2;
-            indexes[1] = position-1;
-            indexes[2] = position;
-        }else{
-            indexes[0] = position-1;
-            indexes[1] = position;
-            indexes[2] = position+1;
-        }
+        indexes[0] = position-1;
+        indexes[1] = position;
+        indexes[2] = position+1;
         return indexes;
     }
 

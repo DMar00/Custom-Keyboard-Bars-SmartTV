@@ -28,6 +28,4 @@ public class SuggestionsControllerTwoBars extends SuggestionsController{
     public boolean areShownBars() {
         return (getBar2().isShown() && getBar1().isShown());
     }
-
-
 }

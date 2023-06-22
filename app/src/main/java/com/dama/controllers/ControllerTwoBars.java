@@ -16,19 +16,34 @@ public class ControllerTwoBars extends Controller{
 
     @Override
     protected void addSuggestionToBars(char[] checkedSuggestions) {
-        Log.d("checkedSuggestions","char1: "+checkedSuggestions[0]+" - char2: "+checkedSuggestions[1]+" - char3 :"+checkedSuggestions[2]);
+        /*Log.d("checkedSuggestions","char1: "+checkedSuggestions[0]+" - char2: "+checkedSuggestions[1]+" - char3 :"+checkedSuggestions[2]);
         Log.d("checkedSuggestions","char4: "+checkedSuggestions[3]+" - char5: "+checkedSuggestions[4]+" - char6 :"+checkedSuggestions[5]);
-
+        */
+        //bars index
         int index1 = getSuggestionsController().getBar1().getRowIndex();
         int index2 = getSuggestionsController().getBar2().getRowIndex();
 
-        char[] sug1 = Arrays.copyOfRange(checkedSuggestions, 0, SuggestionsController.N_SUG_FOR_BAR);
-        char[] sug2 = Arrays.copyOfRange(checkedSuggestions, SuggestionsController.N_SUG_FOR_BAR, SuggestionsController.N_SUG_FOR_BAR*2);
+        //each bar has 3 suggestions
+        char[] sug1 = new char[3];
+        char[] sug2 = new char[3];
 
-        Log.d("indexesRow", "index1: "+index1+" - index2: "+index2);
+        //put first 2 suggestions up and down clicked letter
+        sug1[1] = checkedSuggestions[0];
+        sug2[1] = checkedSuggestions[1];
+
+        //fill others
+        sug1[0] = checkedSuggestions[2];
+        sug1[2] = checkedSuggestions[3];
+        sug2[0] = checkedSuggestions[4];
+        sug2[2] = checkedSuggestions[5];
+
+        //char[] sug1 = Arrays.copyOfRange(checkedSuggestions, 0, SuggestionsController.N_SUG_FOR_BAR);
+        //char[] sug2 = Arrays.copyOfRange(checkedSuggestions, SuggestionsController.N_SUG_FOR_BAR, SuggestionsController.N_SUG_FOR_BAR*2);
+
+        /*Log.d("indexesRow", "index1: "+index1+" - index2: "+index2);
         Log.d("Sizes", "size1: "+sug1.length+" - size2: "+sug2.length);
         Log.d("sug1","char1: "+sug1[0]+" - char2: "+sug1[1]+" - char3 :"+sug1[2]);
-        Log.d("sug2","char1: "+sug2[0]+" - char2: "+sug2[1]+" - char3 :"+sug2[2]);
+        Log.d("sug2","char1: "+sug2[0]+" - char2: "+sug2[1]+" - char3 :"+sug2[2]);*/
 
         fillBar(index1, sug1);
         fillBar(index2, sug2);

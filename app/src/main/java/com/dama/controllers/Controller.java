@@ -13,8 +13,8 @@ import java.util.ArrayList;
 
 
 public abstract class Controller {
-    public static final int COLS = 10;
-    public static final int ROWS = 5+4;
+    public static final int COLS = 10 + 2;  //todo mod +2 added
+    public static final int ROWS = 5 + 4;
     public static final int INVALID_KEY = -1;
     public static final int HIDDEN_KEY = -3;
     public static final int SPACE_KEY = 32;
@@ -32,40 +32,52 @@ public abstract class Controller {
         keysController = new KeysController(new Keyboard(context, R.xml.querty));
         textController = new TextController();
         focusController = new FocusController();
-        focusController.setCurrentFocus(new Cell(2,0));
+        focusController.setCurrentFocus(new Cell(2,1)); //q
         viewsController = new ViewsController(rootView);
         viewsController.drawKeyboard(keysController.getAllKeys(), focusController.getCurrentFocus());
     }
 
     /*********************FOCUS**********************/
     public boolean isNextFocusable(Cell newFocus){
+        Log.d("newFocus", ""+newFocus);
         if(focusController.isFocusInRange(newFocus)
                 && !(keysController.isInvalidKey(newFocus))
                 && !(keysController.isHiddenKey(newFocus))){
+            Log.d("ok","ok");
             return true;
         }
         return false;
     }
 
     public Cell findNewFocus(int code){
-        Cell newFocus = focusController.calculateNewFocus(code);
         Cell curFocus = focusController.getCurrentFocus();
+        Cell newFocus = focusController.calculateNewFocus(code);
 
         switch (code){
             case KeyEvent.KEYCODE_DPAD_UP:
                 if(keysController.getKeysAtRow(newFocus.getRow())!= null && keysController.getKeysAtRow(newFocus.getRow()).isEmpty()){
                     newFocus.setRow(newFocus.getRow()-1);
                 }
-                if((curFocus.getRow() == ROWS-1) && (curFocus.getCol() >= 4 && curFocus.getCol()<=6)){
+
+                //shift from bar 2 to bar 1
+                if(suggestionsController.areShownBars()
+                        && keysController.getKeyAtPosition(newFocus).getCode()==HIDDEN_KEY
+                        && newFocus.getRow()>suggestionsController.getBar1().getRowIndex()
+                        && newFocus.getRow()<suggestionsController.getBar2().getRowIndex()){
+                    newFocus.setRow(suggestionsController.getBar1().getRowIndex());
+                }
+
+                //last row behaviour focus
+                if((curFocus.getRow() == ROWS-1) && (curFocus.getCol() >= 5 && curFocus.getCol()<=7)){
                     switch (curFocus.getCol()){
-                        case 4:
-                            newFocus.setCol(7);
-                            break;
                         case 5:
                             newFocus.setCol(8);
                             break;
                         case 6:
                             newFocus.setCol(9);
+                            break;
+                        case 7:
+                            newFocus.setCol(10);
                             break;
                     }
                 }
@@ -75,13 +87,19 @@ public abstract class Controller {
                     newFocus.setRow(newFocus.getRow()+1);
                 }
 
+                //shift from bar 1 to bar 2
+                if(suggestionsController.areShownBars()
+                        && keysController.getKeyAtPosition(newFocus).getCode()==HIDDEN_KEY
+                        && newFocus.getRow()>suggestionsController.getBar1().getRowIndex()
+                        && newFocus.getRow()<suggestionsController.getBar2().getRowIndex()){
+                    newFocus.setRow(suggestionsController.getBar2().getRowIndex());
+                }
+
+                //last row behaviour focus
                 if(((curFocus.getRow() == ROWS-2) || (curFocus.getRow() == ROWS-3)) && (curFocus.getCol() >= 4 && curFocus.getCol()<=COLS-1)){
                     switch (curFocus.getCol()){
-                        case 4:
                         case 5:
                         case 6:
-                            newFocus.setCol(3);
-                            break;
                         case 7:
                             newFocus.setCol(4);
                             break;
@@ -90,6 +108,9 @@ public abstract class Controller {
                             break;
                         case 9:
                             newFocus.setCol(6);
+                            break;
+                        case 10:
+                            newFocus.setCol(7);
                             break;
                     }
                 }
@@ -121,9 +142,10 @@ public abstract class Controller {
         //get suggestions
         String sequence = textController.getFourCharacters();
         char suggestions[] = suggestionsController.getSuggestionsChars(sequence); //size 12
-        char checkedSuggestions[] = getCheckedSuggestions(suggestions); //size 8
+        char checkedSuggestions[] = getCheckedSuggestions(suggestions); //size<12
 
         //add suggestions to bars
+        Log.d("checkedSuggestionsSize","size: "+checkedSuggestions.length);
         addSuggestionToBars(checkedSuggestions);
 
         //add highlight
@@ -209,14 +231,18 @@ public abstract class Controller {
         int[] prevCols = Utils.removeIntFromArray(colIndexes, prevFocus.getCol());
         Key k3 = keysController.getKeyAtPosition(new Cell(prevRow, prevCols[0]));
         //todo control this in others d
-        if(k3.getIcon()==null){
+        if(k3.getIcon()==null && k3.getCode()!=HIDDEN_KEY){
             char d3 = k3.getLabel().charAt(0);
             Log.d("toDelete","del d3: "+d3);
             charsToDelete.add(d3);
         }
-        char d4 = keysController.getKeyAtPosition(new Cell(prevRow, prevCols[1])).getLabel().charAt(0);
-        Log.d("toDelete","del d4: "+d4);
-        charsToDelete.add(d4);
+
+        Key k4 = keysController.getKeyAtPosition(new Cell(prevRow, prevCols[1]));
+        if(k4.getIcon()==null && k4.getCode()!=HIDDEN_KEY){
+            char d4 = k4.getLabel().charAt(0);
+            Log.d("toDelete","del d4: "+d4);
+            charsToDelete.add(d4);
+        }
 
         //4 to delete -> 12-4 = 8 suggestions
         int dim = allSuggestions.length-charsToDelete.size();
