@@ -110,31 +110,4 @@ public class KeysController {
         return keys;
     }
 
-    /*******************CLICKS********************/
-
-    public int getClicksNumber(Cell selected, Cell other){
-        //int clicks = 0;
-        Cell selectedCell = new Cell(getNewRow(selected.getRow()), selected.getCol());
-        Cell otherCell = new Cell(getNewRow(other.getRow()), other.getCol());
-        Log.d("newCells", "sel: "+selectedCell+" - oth: "+otherCell);
-
-        int difRow = Math.abs(selectedCell.getRow()-otherCell.getRow());
-        int difCol = Math.abs(selectedCell.getCol()-otherCell.getCol());
-        int difCol2 = (Controller.COLS) - difCol;
-        int clicks =  difRow + Math.min(difCol, difCol2);
-        return clicks;
-    }
-
-    private int getNewRow(int oldRow){
-        switch (oldRow){
-            case 2:
-                return 0;
-            case 4:
-                return 1;
-            case 6:
-                return 2;
-            default:
-                return -1;
-        }
-    }
 }

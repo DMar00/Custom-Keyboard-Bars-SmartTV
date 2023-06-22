@@ -230,7 +230,7 @@ public abstract class Controller {
         int[] colIndexes = suggestionsController.getSuggestionsColPositions();
         int[] prevCols = Utils.removeIntFromArray(colIndexes, prevFocus.getCol());
         Key k3 = keysController.getKeyAtPosition(new Cell(prevRow, prevCols[0]));
-        //todo control this in others d
+
         if(k3.getIcon()==null && k3.getCode()!=HIDDEN_KEY){
             char d3 = k3.getLabel().charAt(0);
             Log.d("toDelete","del d3: "+d3);
@@ -244,19 +244,109 @@ public abstract class Controller {
             charsToDelete.add(d4);
         }
 
-        //4 to delete -> 12-4 = 8 suggestions
+        //delete all chars with distance <= 2
+        /*for(char s : allSuggestions){
+            Cell c = keysController.getCharPosition(s);
+            int clicks = keysController.getClicksNumber(curFocus, c);
+            if(clicks<=2)
+                charsToDelete.add(s);
+        }*/
+
+
+        //
         int dim = allSuggestions.length-charsToDelete.size();
         Log.d("dimens","N: "+ dim);
         char[] checkedSuggestions = new char[allSuggestions.length-charsToDelete.size()];
         int i = 0;
         for(char c: allSuggestions){
-            if(!charsToDelete.contains(c) && i<dim){
+            Cell sugCell = keysController.getCharPosition(c);
+            int clicks = getClicksNumber(curFocus, sugCell);
+            Log.d("distance","curFocus: "+keysController.getKeyAtPosition(curFocus).getLabel()+" - letter: "+c+" - ["+clicks+"]");
+            if(!charsToDelete.contains(c) && i<dim && clicks>=2){
                 checkedSuggestions[i] = c;
                 i++;
             }
         }
 
         return checkedSuggestions;
+    }
+
+    public int getClicksNumber(Cell selected, Cell other){
+        Cell selectedCell = new Cell(getNewRow(selected.getRow()), selected.getCol());
+        Cell otherCell = new Cell(getNewRow(other.getRow()), other.getCol());
+
+        Log.d("newCells", "sel: "+selectedCell+" - oth: "+otherCell);
+
+        int difRow = Math.abs(selectedCell.getRow()-otherCell.getRow());
+        int difCol = Math.abs(selectedCell.getCol()-otherCell.getCol());
+        int difCol2 = (Controller.COLS) - difCol;
+        int clicks =  difRow + Math.min(difCol, difCol2);
+
+        /*if(selectedCell.getRow()!=otherCell.getRow()) //if bar is open i have to do another click from rows
+            clicks++;*/
+        return clicks;
+    }
+
+    private int getNewRow(int oldRow){
+        int indexBar1 = suggestionsController.getBar1().getRowIndex();
+        int indexBar2 = suggestionsController.getBar2().getRowIndex();
+        if(indexBar1==1 && indexBar2==3){
+            switch (oldRow){
+                case 1:
+                    return 0;
+                case 2:
+                    return 1;
+                case 3:
+                    return 2;
+                case 4:
+                    return 3;
+                case 6:
+                    return 4;
+                default:
+                    return -1;
+            }
+        }else if(indexBar1==3 && indexBar2==5){
+                switch (oldRow) {
+                    case 2:
+                        return 0;
+                    case 3:
+                        return 1;
+                    case 4:
+                        return 2;
+                    case 5:
+                        return 3;
+                    case 6:
+                        return 4;
+                    default:
+                        return -1;
+                }
+        }else if(indexBar1==5 && indexBar2==7){
+            switch (oldRow) {
+                case 2:
+                    return 0;
+                case 4:
+                    return 1;
+                case 5:
+                    return 2;
+                case 6:
+                    return 3;
+                case 7:
+                    return 4;
+                default:
+                    return -1;
+            }
+        }
+        /*switch (oldRow){
+            case 2:
+                return 0;
+            case 4:
+                return 1;
+            case 6:
+                return 2;
+            default:
+                return -1;
+        }*/
+        return -1;
     }
 
     private void fillKeyboardBar(int index, ArrayList<Key> keys){
