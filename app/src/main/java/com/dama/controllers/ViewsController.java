@@ -66,4 +66,8 @@ public class ViewsController {
         keyboardView.getKeyViewAtCell(position).changeLabel(finaLabel, "#FBFBFB");
     }
 
+    public void removeKeyboard(){
+        keyboardView.deleteAll();
+    }
+
 }

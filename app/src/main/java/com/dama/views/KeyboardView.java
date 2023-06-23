@@ -104,4 +104,12 @@ public class KeyboardView  extends TableLayout {
         for (int i: indexes)
             rows.get(i).clearBar();
     }
+
+    public void deleteAll(){
+        //remove views
+        for(int i=0; i<rows.size(); i++){
+            removeView(rows.get(i));
+        }
+        rows = null;
+    }
 }

@@ -21,13 +21,14 @@ public class KeyboardImeService extends InputMethodService {
     private Controller controller;
     private boolean keyboardShown;
     private InputConnection ic;
+    private FrameLayout rootView;
 
     @Override
     public View onCreateInputView() {
-        @SuppressLint("InflateParams")
-        FrameLayout rootView = (FrameLayout) this.getLayoutInflater().inflate(R.layout.keyboard_layout, null);
+        rootView = (FrameLayout) this.getLayoutInflater().inflate(R.layout.keyboard_layout, null);
         controller = new ControllerTwoBars(getApplicationContext(), rootView);
         //controller = new ControllerOneBar(getApplicationContext(), rootView);
+        controller.drawKeyboard();
         return rootView;
     }
 
@@ -51,6 +52,20 @@ public class KeyboardImeService extends InputMethodService {
             Log.d("KeyboardImeService", "onKeyDown code: "+ keyCode);
             ic = getCurrentInputConnection();
             switch (keyCode){
+                case KeyEvent.KEYCODE_1:
+                    Log.d("MOD 1 BAR","selected");
+                    //controller.reInitKeyboard();
+                    controller.hideBars();
+                    controller = new ControllerOneBar(getApplicationContext(), rootView);
+                    controller.moveFocusOnKeyboard(controller.getFocusController_().getCurrentFocus());
+                    break;
+                case KeyEvent.KEYCODE_2:
+                    Log.d("MOD 2 BARS","selected");
+                    //controller.reInitKeyboard();
+                    controller.hideBars();
+                    controller = new ControllerTwoBars(getApplicationContext(), rootView);
+                    controller.moveFocusOnKeyboard(controller.getFocusController_().getCurrentFocus());
+                    break;
                 case KeyEvent.KEYCODE_BACK:
                     hideKeyboard();
                     break;

@@ -34,6 +34,10 @@ public abstract class Controller {
         focusController = new FocusController();
         focusController.setCurrentFocus(new Cell(2,1)); //q
         viewsController = new ViewsController(rootView);
+        //viewsController.drawKeyboard(keysController.getAllKeys(), focusController.getCurrentFocus());
+    }
+
+    public void drawKeyboard(){
         viewsController.drawKeyboard(keysController.getAllKeys(), focusController.getCurrentFocus());
     }
 
@@ -428,4 +432,12 @@ public abstract class Controller {
         }
     }
 
+    public void deleteOldKeyboard(int n){
+        reInitKeyboard();
+        if(n==1){
+
+        }else if (n==2){
+
+        }
+    }
 }
