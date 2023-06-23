@@ -14,6 +14,7 @@ import com.dama.controllers.Controller;
 import com.dama.controllers.ControllerOneBar;
 import com.dama.controllers.ControllerTwoBars;
 import com.dama.customkeyboardbarstv.R;
+import com.dama.log.TemaImeLogger;
 import com.dama.utils.Cell;
 import com.dama.utils.Key;
 
@@ -22,6 +23,7 @@ public class KeyboardImeService extends InputMethodService {
     private boolean keyboardShown;
     private InputConnection ic;
     private FrameLayout rootView;
+    private TemaImeLogger temaImeLogger;
 
     @Override
     public View onCreateInputView() {
@@ -29,6 +31,9 @@ public class KeyboardImeService extends InputMethodService {
         controller = new ControllerTwoBars(getApplicationContext(), rootView);
         //controller = new ControllerOneBar(getApplicationContext(), rootView);
         controller.drawKeyboard();
+
+        temaImeLogger = new TemaImeLogger(getApplicationContext());
+
         return rootView;
     }
 
@@ -70,9 +75,13 @@ public class KeyboardImeService extends InputMethodService {
                     hideKeyboard();
                     break;
                 case KeyEvent.KEYCODE_DPAD_LEFT:
+                    temaImeLogger.writeToLog("LEFT",false);
                 case KeyEvent.KEYCODE_DPAD_RIGHT:
+                    temaImeLogger.writeToLog("RIGHT",false);
                 case KeyEvent.KEYCODE_DPAD_UP:
+                    temaImeLogger.writeToLog("UP",false);
                 case KeyEvent.KEYCODE_DPAD_DOWN:
+                    temaImeLogger.writeToLog("DOWN",false);
                     Cell newCell = controller.findNewFocus(keyCode);
                     if (controller.isNextFocusable(newCell)){
                         //update focus
@@ -81,6 +90,7 @@ public class KeyboardImeService extends InputMethodService {
                     }
                     break;
                 case KeyEvent.KEYCODE_DPAD_CENTER:
+                    temaImeLogger.writeToLog("CENTER",false);
                 case KeyEvent.KEYCODE_0:    //todo remove - just for emulator test OK
                     Cell focus = controller.getFocusController_().getCurrentFocus();
                     Key key = controller.getKeysController().getKeyAtPosition(focus);
